@@ -1,0 +1,6 @@
+<!doctype html><html><head><link rel='stylesheet' href='/static/style.css'></head>
+<body><h2>Qui êtes-vous ?</h2>
+{% for u in users %}
+<form action='/login'><button name='user' value='{{u}}'>{{u}}</button></form>
+{% endfor %}
+</body></html>
