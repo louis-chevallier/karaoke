@@ -21,9 +21,21 @@ deploy :
 	-cd $(DEPLOY_DIR); rm -fr karaoke; git clone  https://github.com/louis-chevallier/karaoke.git; cd karaoke
 
 
+
 # separate voice/music
 #  pip install -U demucs
 
 # demucs -n htdemucs --two-stems=vocals /mnt/NUC/Audio/karaoke/mon-amie-la-rose.mp3
+
+SONG ?=song_does_not_exist.mp3
+
+demux :
+# 	High-quality model (slower, better results)
+#	demucs --two-stems=vocals -n htdemucs_ft audio.mp3
+# 	Faster model
+#	demucs -n htdemucs audio.mp3
+# 	Best quality (slowest)
+	demucs -n mdx_extra_q $(SONG)
+
 
 
