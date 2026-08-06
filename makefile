@@ -20,3 +20,10 @@ deploy :
 	-git push
 	-cd $(DEPLOY_DIR); rm -fr karaoke; git clone  https://github.com/louis-chevallier/karaoke.git; cd karaoke
 
+
+# separate voice/music
+#  pip install -U demucs
+
+# demucs -n htdemucs --two-stems=vocals /mnt/NUC/Audio/karaoke/mon-amie-la-rose.mp3
+
+
