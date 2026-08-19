@@ -39,3 +39,19 @@ demux :
 
 
 
+YT="https://www.youtube.com/watch?v=pHKQ7HJvS0s&list=RDpHKQ7HJvS0s&start_radio=1"
+YT="https://www.youtube.com/watch?v=pHKQ7HJvS0s"
+YT='https://www.youtube.com/watch?v=8eKYKOjg0fY&list=RD8eKYKOjg0fY'
+
+zao :
+#	yt-dlp 'https://www.youtube.com/watch?v=0eOHEU3sXik&list=RD0eOHEU3sXik&start_radio=1'
+#	yt-dlp -x --audio-format mp3 --no-playlist 'https://www.youtube.com/watch?v=0eOHEU3sXik'
+#	yt-dlp -x -t mp3 --no-playlist 'https://www.youtube.com/watch?v=pqo59FkF_5g'
+	yt-dlp -x -t  mp3 --no-playlist  $(YT)
+
+#&list=RDpqo59FkF_5g&start_radio=1
+#&list=RD0eOHEU3sXik'
+
+#&start_radio=1'
+
+
