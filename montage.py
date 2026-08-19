@@ -12,10 +12,14 @@ from moviepy import (
 	CompositeVideoClip,
 	concatenate_videoclips
 )
+import moviepy
+EKOX(moviepy.__version__)
+from moviepy.audio.fx import AudioLoop
 from moviepy.video.fx import FadeIn, FadeOut
 import math
 
 import annote
+
 
 # ============================================================
 # PARAMÈTRES
@@ -503,7 +507,10 @@ def main() :
 	music = "/mnt/NUC/data/zao.mp3"
 	
 	audio = AudioFileClip(music)
-	final_video  = final_video.with_audio(audio)	
+	audio = audio.with_effects([
+		AudioLoop(duration=final_video.duration)
+	])
+	final_video  = final_video.with_audio(audio).with_duration(final_duration)
 	
 	final_video.write_videofile(
 		OUTPUT_FILE,
