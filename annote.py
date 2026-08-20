@@ -5,8 +5,21 @@ import os, sys
 import json
 import glob
 import math
-from utillc import *
+import numpy as np
 
+from moviepy import (
+	ImageClip,
+	AudioFileClip,
+	VideoFileClip,
+	CompositeVideoClip,
+	concatenate_videoclips
+)
+import moviepy
+
+from moviepy.audio.fx import AudioLoop
+from moviepy.video.fx import CrossFadeIn, CrossFadeOut, FadeIn, FadeOut
+from utillc import *
+EKOX(moviepy.__version__)
 photo_dir = "/mnt/NUC/perso/solene-photos"			# Répertoire contenant images et vidéos
 
 # ------------------------------------------------------------
@@ -60,6 +73,41 @@ class ImageViewer:
 			if os.path.isfile(f)
 			and f.lower().endswith(IMAGE_EXTENSIONS)
 		)
+
+		#### test
+		IMAGE_DURATION = 5
+		FADE_DURATION = 1
+		"""
+		c = lambda img : ImageClip(np.array(Image.open(img))).with_duration(IMAGE_DURATION)
+		clipa, clipb = list(map(c, self.files[0:2]))
+
+		clip1 = clipa.subclipped(0, 5)
+		clip2 = clipb
+
+		# adding cross fade of 2 seconds in the clip2
+		#clip2 = clip2.crossfadein(2.0)
+		clip2 = clip2.with_effects([
+				CrossFadeIn(FADE_DURATION)
+		])
+		
+		# creating a composite video
+		final = CompositeVideoClip([clip1, clip2])
+		EKOX(final.duration)
+		# showing final clip
+		#final.ipython_display(width = 480)
+		final.write_videofile(
+				"out.mp4",
+				fps=24,
+				codec="libx264",
+				audio_codec="aac",
+				preset="medium",
+				threads=4
+		)
+
+		sys.exit(0)
+		"""
+
+
 
 		
 		
@@ -161,7 +209,7 @@ class ImageViewer:
 				self.circle,
 				separators=(",", ":")
 			)
-
+			EKOX(data)
 			# Format EXIF UserComment :
 			# 8 octets indiquant l'encodage + données
 			exif[EXIF_USER_COMMENT] = (
@@ -261,6 +309,7 @@ class ImageViewer:
 				 f"{os.path.basename(filename)}	  "
 				 f"{self.image.width} × {self.image.height}"
 		)
+		self.root.title("%d %s %s (%d images)" % (self.index, filename, str(self.circle), len(self.files)))
 
 
 	# --------------------------------------------------------
@@ -426,7 +475,10 @@ class ImageViewer:
 		EKOX(dir(event))
 		EKOX(event.keysym)
 		self.description = event.keysym
+		self.save_circle()
+		self.load_image()
 
+		
 	def next_image(self, event=None):
 
 		if self.index < len(self.files) - 1:
