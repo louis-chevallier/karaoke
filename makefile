@@ -35,7 +35,7 @@ demux :
 # 	Faster model
 #	demucs -n htdemucs audio.mp3
 # 	Best quality (slowest)
-	demucs -n mdx_extra_q $(SONG)
+	demucs --two-stems=vocals -n mdx_extra_q $(SONG)
 
 
 
