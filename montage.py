@@ -540,7 +540,8 @@ def load_media(filename, ifile=0):
 			cercle = { "cx" : self.image.width/2,
 					   "cy" : self.image.height/2,					   
 					   "r" : self.image.width/2,
-					   "desc" : ""
+					   "desc" : "",
+					   "age" : "9"
 					  }
 		cx, cy, rayon = cercle["cx"], cercle["cy"], cercle["r"]
 		#img = image_centre_point_disque(img, (cx, cy), rayon)
@@ -620,7 +621,8 @@ def main() :
 			cercle = { "cx" : img.width/2,
 					   "cy" : img.height/2,					   
 					   "r" : img.width/2,
-					   "desc" : ""
+					   "desc" : "",
+					   "age" : "9"
 					  }
 		return cercle
 
@@ -635,6 +637,7 @@ def main() :
 	EKON(len(cf("m")))
 	EKON(len(cf("d")))
 
+	files_2 = sorted(files_2, key = lambda x : x[1]["age"])
 	solene, matthieu, deux = list(map(cf, "smd"))	
 	
 	files_2 = sorted(files_2, key = lambda x : x[1]["desc"])

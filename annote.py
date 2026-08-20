@@ -140,6 +140,7 @@ class ImageViewer:
 		self.center_x = None
 		self.center_y = None
 		self.description = "xxx"
+		self.age = "9"
 		# ----------------------------------------------------
 		# Interface
 		# ----------------------------------------------------
@@ -172,6 +173,9 @@ class ImageViewer:
 		self.root.bind("m", self.desc)		
 		self.root.bind("s", self.desc)		
 		self.root.bind("d", self.desc)		
+
+		#self.root.bind("<KeyRelease>", self.age)
+		self.root.bind("<KeyRelease>", lambda e : self.agef(e))
 		# Flèches
 		self.root.bind("<Right>", self.next_image)
 		self.root.bind("<Left>", self.previous_image)
@@ -205,6 +209,7 @@ class ImageViewer:
 
 			exif = image.getexif()
 			self.circle["desc"] = self.description
+			self.circle["age"] = self.age
 			data = json.dumps(
 				self.circle,
 				separators=(",", ":")
@@ -478,6 +483,15 @@ class ImageViewer:
 		self.save_circle()
 		self.load_image()
 
+	def agef(self, event=None):
+		EKON(event)
+		if event.keysym in [ "0", "1", "2"] :
+				EKOX(dir(event))
+				EKOX(event.keysym)
+				self.age = event.keysym
+				self.save_circle()
+				self.load_image()
+				EKOX(self.circle)
 		
 	def next_image(self, event=None):
 
