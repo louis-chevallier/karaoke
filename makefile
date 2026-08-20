@@ -28,14 +28,33 @@ deploy :
 # demucs -n htdemucs --two-stems=vocals /mnt/NUC/Audio/karaoke/mon-amie-la-rose.mp3
 
 SONG ?=song_does_not_exist.mp3
+SONG ?="/mnt/NUC/data/zao.mp3"
 
 demux :
 # 	High-quality model (slower, better results)
-#	demucs --two-stems=vocals -n htdemucs_ft audio.mp3
+	demucs --two-stems=vocals -n htdemucs_ft $(SONG)
 # 	Faster model
 #	demucs -n htdemucs audio.mp3
 # 	Best quality (slowest)
 	demucs --two-stems=vocals -n mdx_extra_q $(SONG)
+#	demucs -n mdx_extra_q $(SONG)
 
+
+
+
+YT="https://www.youtube.com/watch?v=pHKQ7HJvS0s&list=RDpHKQ7HJvS0s&start_radio=1"
+YT="https://www.youtube.com/watch?v=pHKQ7HJvS0s"
+YT='https://www.youtube.com/watch?v=8eKYKOjg0fY&list=RD8eKYKOjg0fY'
+
+zao :
+#	yt-dlp 'https://www.youtube.com/watch?v=0eOHEU3sXik&list=RD0eOHEU3sXik&start_radio=1'
+#	yt-dlp -x --audio-format mp3 --no-playlist 'https://www.youtube.com/watch?v=0eOHEU3sXik'
+#	yt-dlp -x -t mp3 --no-playlist 'https://www.youtube.com/watch?v=pqo59FkF_5g'
+	yt-dlp -x -t  mp3 --no-playlist  $(YT)
+
+#&list=RDpqo59FkF_5g&start_radio=1
+#&list=RD0eOHEU3sXik'
+
+#&start_radio=1'
 
 
