@@ -929,6 +929,8 @@ def main() :
 	
 	EKOX(audio.duration)
 	EKOX(final_video.duration)
+
+	audio = audio.with_effects([ AudioLoop(duration=final_video.duration)	])
 	final_video  = final_video.with_audio(audio)#.with_duration(final_duration)
 
 	
