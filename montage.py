@@ -611,7 +611,7 @@ def main() :
 	for f in files:
 		print("	 ", f.name)
 	#files = files[:6]
-	files = files[:18]
+	#files = files[:18]
 
 	def rr(fn) :
 		img =  Image.open(fn)
@@ -752,12 +752,13 @@ def main() :
 	
 	zao = "/mnt/NUC/data/zao.mp3"
 	pinard  = "/mnt/NUC/data/fabienne_thierry_zao.mp3"
+	no_vocals  = "/mnt/NUC/data/zao_no_vocals.mp3"
 
 	zao = AudioFileClip(zao)
 	pinard = AudioFileClip(pinard)
 	pinard = pinard.subclipped(0, 20)
 
-	audio = pinard + zao
+	audio = CompositeAudioClip(pinard + zao, no_vocals)
 	
 	EKOX(audio.duration)
 	EKOX(final_video.duration)
