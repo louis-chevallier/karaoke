@@ -104,6 +104,7 @@ VIDEO_WIDTH = 1920
 VIDEO_HEIGHT = 1080
 
 
+louis_zao_fn = "/mnt/NUC/data/louis_zao.mp3"
 zao_fn = "/mnt/NUC/data/zao.mp3"
 zao_vocals_fn = "/mnt/NUC/data/zao_vocals.mp3"
 zao_no_vocals_fn = "/mnt/NUC/data/zao_no_vocals.mp3"
@@ -659,15 +660,32 @@ def intercaler(a, b):
 
 def main() :
 
+	sss_g_fn = "sss_g.mp3"
+	lll_g_fn = "lll_g.mp3"
+	kkk_g_fn = "kkk_g.mp3"
+
 	ll =t1,t2,t3,t4,t5,t6,t7,t8,t9 = zao_data.nn
 	llz = zt1, zt2, zt3, zt4, zt5, zt6, zt7, zt8, zt9 = map(parse_tc, ll)
 
 	ll =t1,t2,t3,t4,t5,t6 = pinard_data.nn
 	llp = pt1, pt2, pt3, pt4, pt5, pt6 = map(parse_tc, ll)
+
+	ll = lt1,lt2 = louis_data.nn
+	lll = lt1, lt2 = map(parse_tc, ll)
 	EKO()
 	# Load your audio file (e.g., WAV or MP3)
-	audio_zao_vocals = AudioSegment.from_file(zao_vocals_fn)
+
 	audio_zao_no_vocals = AudioSegment.from_file(zao_no_vocals_fn)
+	audio_louis  = AudioSegment.from_file(louis_zao_fn)[int(lt1*1000) : int(lt2*1000)]
+	audio_louis_no_vocals = audio_zao_no_vocals[int(zt1*1000) : int(zt2*1000)]
+
+	lll_g_fn = "lll_g.mp3"
+	lll_g = audio_louis.apply_gain(-3).overlay(audio_louis__no_vocals_g.apply_gain(-1))
+	lll_g.export(lll_g_fn, format="mp3")
+	
+	
+	audio_zao_vocals = AudioSegment.from_file(zao_vocals_fn)
+
 	audio_zao = AudioSegment.from_file(zao_fn)
 	audio_pinard = AudioSegment.from_file(pinard_fn)
 	EKO()
@@ -698,7 +716,7 @@ def main() :
 	EKOX(len(audio_zao_no_vocals_g))
 
 
-	sss_g_fn = "sss_g.mp3"
+
 	sss_g = audio_pinard_g_su.apply_gain(-3).overlay(audio_zao_no_vocals_g.apply_gain(-1))
 	sss_g.export(sss_g_fn, format="mp3")
 	
@@ -904,15 +922,13 @@ def main() :
 	audio = pinard + zao
 
 
-	audio = AudioFileClip(sss_g_fn)
+	audio = AudioFileClip(sss_g_fn) + AudioFileClip(lll_g_fn)
 
 
 	
 	EKOX(audio.duration)
 	EKOX(final_video.duration)
-	audio = audio.with_effects([
-		AudioLoop(duration=final_video.duration)
-	])
+	#audio = audio.with_effects([ AudioLoop(duration=final_video.duration)	])
 	final_video  = final_video.with_audio(audio).with_duration(final_duration)
 	
 	final_video.write_videofile(
