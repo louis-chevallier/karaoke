@@ -14,7 +14,9 @@ xxx :
 	echo $(WOD)
 
 start :
-	python server.py
+#	python server.py
+	python montage.py
+
 deploy :
 	-git commit -a -m $(WOD)
 	-git push
