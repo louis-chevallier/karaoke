@@ -27,6 +27,7 @@ EKOX(moviepy.__file__)
 import regex as re
 import zao as zao_data
 import pinard as pinard_data
+import louis as louis_data
 
 import numpy as np
 import librosa
@@ -680,7 +681,7 @@ def main() :
 	audio_louis_no_vocals = audio_zao_no_vocals[int(zt1*1000) : int(zt2*1000)]
 
 	lll_g_fn = "lll_g.mp3"
-	lll_g = audio_louis.apply_gain(-3).overlay(audio_louis__no_vocals_g.apply_gain(-1))
+	lll_g = audio_louis.apply_gain(-3).overlay(audio_louis_no_vocals.apply_gain(-1))
 	lll_g.export(lll_g_fn, format="mp3")
 	
 	
