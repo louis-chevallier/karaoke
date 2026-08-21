@@ -1,9 +1,12 @@
+from pydub import AudioSegment
+from pydub.effects import speedup
 import random
 import os
 from pathlib import Path
 from utillc import *
 from PIL import Image, ImageFilter
 from PIL import ImageDraw, ImageFont
+import librosa
 import numpy as np
 from moviepy import (
 	ImageClip,
@@ -21,7 +24,69 @@ from moviepy.audio.fx import AudioLoop, MultiplyVolume
 import math
 import annote
 EKOX(moviepy.__file__)
+import regex as re
+import zao as zao_data
+import pinard as pinard_data
 
+import numpy as np
+import librosa
+from pydub import AudioSegment
+
+
+def ralentir(audio, facteur):
+    # AudioSegment -> numpy
+    samples = np.array(audio.get_array_of_samples())
+
+    # Remettre les canaux sous forme séparée
+    if audio.channels > 1:
+        samples = samples.reshape((-1, audio.channels))
+        samples = samples.T
+    else:
+        samples = samples[np.newaxis, :]
+
+    # Conversion en float [-1, 1]
+    max_val = 2 ** (8 * audio.sample_width - 1)
+    samples = samples.astype(np.float32) / max_val
+
+    # Time-stretching canal par canal
+    ralentis = []
+    for canal in samples:
+        y = librosa.effects.time_stretch(
+            canal,
+            rate=facteur
+        )
+        ralentis.append(y)
+
+    ralentis = np.array(ralentis)
+
+    # Remettre sous forme entrelacée
+    ralentis = ralentis.T.reshape(-1)
+
+    # Retour en entier
+    ralentis = np.clip(ralentis * max_val, -max_val, max_val - 1)
+    ralentis = ralentis.astype(
+        np.int16 if audio.sample_width == 2 else np.int32
+    )
+
+    # numpy -> AudioSegment
+    return AudioSegment(
+        ralentis.tobytes(),
+        frame_rate=audio.frame_rate,
+        sample_width=audio.sample_width,
+        channels=audio.channels
+    )
+
+def parse_tc(tc) :
+	match = re.search(r'^(\d+)\.(\d+)$', tc)
+	if match :
+		s,dd = map(match.group, (1, 2))
+		m =0
+	else :
+		match = re.search(r'^(\d+)m(\d+)\.(\d+)$', tc)		
+		m, s,dd = map(match.group, (1, 2, 3))
+
+	return float(m)*60 + float(s) + float(dd)/1000
+	
 # ============================================================
 # PARAMÈTRES
 # ============================================================
@@ -38,6 +103,11 @@ FPS = 30					 # Images par seconde de la vidéo finale
 VIDEO_WIDTH = 1920
 VIDEO_HEIGHT = 1080
 
+
+zao_fn = "/mnt/NUC/data/zao.mp3"
+zao_vocals_fn = "/mnt/NUC/data/zao_vocals.mp3"
+zao_no_vocals_fn = "/mnt/NUC/data/zao_no_vocals.mp3"
+pinard_fn  = "/mnt/NUC/data/fabienne_thierry_zao.mp3"
 
 # ============================================================
 # EXTENSIONS RECONNUES
@@ -585,7 +655,84 @@ def intercaler(a, b):
 # RECHERCHE DES FICHIERS
 # ============================================================
 
+
+
 def main() :
+
+	ll =t1,t2,t3,t4,t5,t6,t7,t8,t9 = zao_data.nn
+	llz = zt1, zt2, zt3, zt4, zt5, zt6, zt7, zt8, zt9 = map(parse_tc, ll)
+
+	ll =t1,t2,t3,t4,t5,t6 = pinard_data.nn
+	llp = pt1, pt2, pt3, pt4, pt5, pt6 = map(parse_tc, ll)
+	EKO()
+	# Load your audio file (e.g., WAV or MP3)
+	audio_zao_vocals = AudioSegment.from_file(zao_vocals_fn)
+	audio_zao_no_vocals = AudioSegment.from_file(zao_no_vocals_fn)
+	audio_zao = AudioSegment.from_file(zao_fn)
+	audio_pinard = AudioSegment.from_file(pinard_fn)
+	EKO()
+	audio_pinard_1 = audio_pinard[int(pt1*1000) : int(pt2*1000)]
+	audio_pinard_1.export("audio_pinard_1.mp3", format="mp3")
+
+	audio_pinard_5 = audio_pinard[int(pt5*1000) : int(pt6*1000)]
+	audio_pinard_5.export("audio_pinard_5.mp3", format="mp3")
+
+	
+	audio_zao_1 = audio_zao[int(zt1*1000) : int(zt2*1000)]
+	audio_zao_1.export("audio_zao_1.mp3", format="mp3")
+
+	audio_zao_5 = audio_zao[int(zt5*1000) : int(zt6*1000)]
+	audio_zao_5.export("audio_zao_5.mp3", format="mp3")
+
+
+	audio_pinard_g = audio_pinard[int(pt1*1000) : int(pt6*1000)]
+	f = (pt6 - pt1) / (zt6 - zt1)
+
+	EKOX(f)
+	EKOX(len(audio_pinard_g))
+	audio_pinard_g_su = ralentir(audio_pinard_g, facteur=f)
+	EKOX(len(audio_pinard_g_su))
+	audio_zao_no_vocals_g  = audio_zao_no_vocals[int(zt1*1000) : int(zt6*1000)]
+
+	EKOX(len(audio_pinard_g_su))
+	EKOX(len(audio_zao_no_vocals_g))
+
+
+	sss_g_fn = "sss_g.mp3"
+	sss_g = audio_pinard_g_su.apply_gain(-3).overlay(audio_zao_no_vocals_g.apply_gain(-1))
+	sss_g.export(sss_g_fn, format="mp3")
+	
+	"""
+	audio_pinard_su.export("pinard_su.mp3", format="mp3")
+	
+	sss = audio_pinard_su.apply_gain(-3).overlay(audio_zao_1.apply_gain(-3))
+	sss.export("sss.mp3", format="mp3")
+	"""
+	
+
+	EKOX(len(audio_pinard_1))
+	EKOX(len(audio_zao_1))
+	#EKOX(len(audio_pinard_su))
+	
+	
+	#fast_audio = speedup(audio, playback_speed=1.5)
+	EKO()
+	# Export the result
+	#fast_audio.export("fast_example.mp3", format="mp3")
+
+	EKOX(pt1 - zt1) # pinard demarre plus tard
+
+	EKOX(zt2 - zt1)
+	EKOX(pt2 - pt1)
+
+	EKOX(zt3 - zt2)
+	EKOX(pt3 - pt2)
+	
+
+	EKOX(parse_tc("1.234"))
+	EKOX(parse_tc("1m1.234"))
+
+	
 
 	input_path = Path(INPUT_DIR)
 
@@ -611,7 +758,8 @@ def main() :
 	for f in files:
 		print("	 ", f.name)
 	#files = files[:6]
-	#files = files[:18]
+	files = files[:3]
+
 
 	def rr(fn) :
 		img =  Image.open(fn)
@@ -749,16 +897,16 @@ def main() :
 	print("Création de la vidéo...")
 	print(f"Durée : {final_duration:.1f} secondes")
 
-	
-	zao = "/mnt/NUC/data/zao.mp3"
-	pinard  = "/mnt/NUC/data/fabienne_thierry_zao.mp3"
-	no_vocals  = "/mnt/NUC/data/zao_no_vocals.mp3"
-
-	zao = AudioFileClip(zao)
-	pinard = AudioFileClip(pinard)
+	zao = AudioFileClip(zao_fn)
+	pinard = AudioFileClip(pinard_fn)
 	pinard = pinard.subclipped(0, 20)
 
-	audio = CompositeAudioClip(pinard + zao, no_vocals)
+	audio = pinard + zao
+
+
+	audio = AudioFileClip(sss_g_fn)
+
+
 	
 	EKOX(audio.duration)
 	EKOX(final_video.duration)
