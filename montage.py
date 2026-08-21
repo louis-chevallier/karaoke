@@ -758,7 +758,7 @@ def main() :
 	for f in files:
 		print("	 ", f.name)
 	#files = files[:6]
-	files = files[:3]
+	#files = files[:3]
 
 
 	def rr(fn) :
@@ -831,7 +831,7 @@ def main() :
 	for i, (clip, clip2) in enumerate(zip(clips, clipd)):
 	#for i, clip in enumerate(clips) :
 		duration = clip.duration
-		EKON(clip.duration, clip2.duration)
+		#EKON(clip.duration, clip2.duration)
 		if i == 0:
 			# Premier clip
 			EKOX(clip.duration)			
@@ -853,7 +853,7 @@ def main() :
 		else:
 			current_time -= FADE_DURATION
 			clipa = clip.subclipped(FADE_DURATION, IMAGE_DURATION - FADE_DURATION)
-			EKOX(clipa.duration)
+			#EKOX(clipa.duration)
 			clipx = clip.subclipped(IMAGE_DURATION - FADE_DURATION, IMAGE_DURATION)
 			clipx = clipx.with_effects([
 				CrossFadeOut(FADE_DURATION - epsi)
@@ -865,7 +865,7 @@ def main() :
 			])
 
 			clipb = CompositeVideoClip([clipx, clipy])
-			EKOX(clipb.duration)
+			#EKOX(clipb.duration)
 		final_clips.append(clipa)
 		final_clips.append(clipb)
 
@@ -913,7 +913,7 @@ def main() :
 	audio = audio.with_effects([
 		AudioLoop(duration=final_video.duration)
 	])
-	final_video  = final_video.with_audio(audio).with_duration(final_duration)
+	final_video  = final_video.with_audio(audio)#.with_duration(final_duration)
 	
 	final_video.write_videofile(
 		OUTPUT_FILE,
